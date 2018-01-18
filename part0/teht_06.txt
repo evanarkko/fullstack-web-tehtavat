@@ -1,0 +1,16 @@
+kayttaja->selain:
+note left of selain
+kayttaja kirjottaa merkkijonon
+kirjoituskenttään ja painaa "tallenna"
+end note
+note right of selain
+selain päivittää sivun saadun datan avulla, ja lähettää sen
+talteen palvelimelle
+end note
+selain->palvelin: POST fullstack-exampleapp.herokuapp.com/new-note-spa
+
+note left of palvelin
+palvelin lisää muistiinpanon tiedostoon data.json
+end note
+
+palvelin->selain: json mudossa: { "message" : "note delivered"}
