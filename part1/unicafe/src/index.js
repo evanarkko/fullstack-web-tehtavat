@@ -10,34 +10,45 @@ class App extends React.Component {
             neutraali: 0,
             huono: 0,
             keskiarvonOsoittaja: 0,
-            palautteidenLkm: 0
+            palautteidenLkm: 0,
+            anekdoottiNakyvilla: 0,
+            anekdootinIndeksi: 0
+        }
+    }
+    annaPalaute = pal => () => {
+        this.setState({palautteidenLkm: this.state.palautteidenLkm + 1})
+        switch(pal){
+            case -1:
+                this.setState({huono: this.state.huono + 1, keskiarvonOsoittaja: this.state.keskiarvonOsoittaja - 1})
+                break
+            case 0:
+                this.setState({neutraali: this.state.neutraali + 1})
+                break
+            case 1:
+                this.setState({hyva: this.state.hyva + 1, keskiarvonOsoittaja: this.state.keskiarvonOsoittaja + 1})
+                break
+            default:
         }
     }
 
-    countReview = () => {
-        this.setState({palautteidenLkm: this.state.palautteidenLkm + 1})
-    }
-    goodReview = () => () => {
-        this.countReview()
-        this.setState({hyva: this.state.hyva + 1, keskiarvonOsoittaja: this.state.keskiarvonOsoittaja + 1})
-    }
-    neutralReview = () => () => {
-        this.countReview()
-        this.setState({neutraali: this.state.neutraali + 1})
-    }
-    badReview = () => () => {
-        this.countReview()
-        this.setState({huono: this.state.huono + 1, keskiarvonOsoittaja: this.state.keskiarvonOsoittaja - 1})
+    uusiAnekdootti = () => () => {
+        this.setState({anekdoottiNakyvilla: 1, anekdootinIndeksi: random(5)})
     }
 
-    render() {
+    aanestaAnekdoottia = (indeksi) => () => {
+        let apu = aanet[indeksi] + 1
+        aanet[indeksi] = apu
+        this.forceUpdate()
+    }
+
+        render() {
         return (
             <div>
                 <h2>Anna Palautetta</h2>
                 <div>
-                    <Button handleClick={this.goodReview()} text="Hyvä"/>
-                    <Button handleClick={this.neutralReview()} text="Neutraali"/>
-                    <Button handleClick={this.badReview()} text="Huono"/>
+                    <Button handleClick={this.annaPalaute(1)} text="Hyvä"/>
+                    <Button handleClick={this.annaPalaute(0)} text="Neutraali"/>
+                    <Button handleClick={this.annaPalaute(-1)} text="Huono"/>
                 </div>
                 <h2>Statistiikka</h2>
 
@@ -45,10 +56,56 @@ class App extends React.Component {
                             neutraali={this.state.neutraali}
                             huono={this.state.huono}
                             keskiarvonOsoittaja={this.state.keskiarvonOsoittaja}
-                            palautteidenLkm={this.state.palautteidenLkm}/>
+                            palautteidenLkm={this.state.palautteidenLkm}/><br></br>
+                <div>
+                    <Button handleClick={this.aanestaAnekdoottia(this.state.anekdootinIndeksi)} text="Äänestä"/>
+                    <Button handleClick={this.uusiAnekdootti()} text="Anekdootti"/>
+                    <Anecdote indeksi={this.state.anekdootinIndeksi} nakyva={this.state.anekdoottiNakyvilla}/>
+                    <h3>Anecdote with most votes:</h3>
+                    <Anecdote indeksi={suurimmanLuvunIndeksi(aanet, 6)} nakyva={this.state.anekdoottiNakyvilla}/>
+                </div>
             </div>
         )
     }
+}
+
+const random = (max) => Math.floor(Math.random()*(max+1)) //random #
+
+const anecdotes = [
+    'If it hurts, do it more often',
+    'Adding manpower to a late software project makes it later!',
+    'The first 90 percent of the code accounts for the first 90 percent of the development time...The remaining 10 percent of the code accounts for the other 90 percent of the development time.',
+    'Any fool can write code that a computer can understand. Good programmers write code that humans can understand.',
+    'Premature optimization is the root of all evil.',
+    'Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.'
+]
+const aanet = [0, 0, 0, 0, 0, 0]
+
+const suurimmanLuvunIndeksi = (taulukko, taulukonPituus) => {
+    let suurinLuku = 0;
+    let indeksi = 0;
+    for(let i = 0; i < taulukonPituus; i++){
+        if(taulukko[i] > suurinLuku){
+            suurinLuku = taulukko[i]
+            indeksi = i
+        }
+    }
+    console.log(taulukko)
+    return indeksi
+}
+
+const Anecdote = ({indeksi, nakyva}) => {
+    if(nakyva === 1){
+        return(
+            <div>
+                <p>{anecdotes[indeksi]}</p>
+                <p>has {aanet[indeksi]} votes</p>
+            </div>
+        )
+    }
+    return(
+        <p></p>
+    )
 }
 
 const Button = ({handleClick, text}) => {
@@ -60,14 +117,21 @@ const Button = ({handleClick, text}) => {
 }
 
 const Statistics = (props) => {
+    if (props.palautteidenLkm === 0) {
+        return (
+            <div>Ei palautteita</div>
+        )
+    }
     return (
-        <div>
+        <table>
+            <tbody>
             <Statistic tyyppi="hyva" arvo={props.hyva}/>
             <Statistic tyyppi="neutraali" arvo={props.neutraali}/>
             <Statistic tyyppi="huono" arvo={props.huono}/>
             <Statistic tyyppi="keskiarvo" arvo={props.keskiarvonOsoittaja} lkm={props.palautteidenLkm}/>
             <Statistic tyyppi="positiiviset" arvo={props.hyva} lkm={props.palautteidenLkm}/>
-        </div>
+            </tbody>
+        </table>
     )
 }
 
@@ -83,34 +147,48 @@ const Statistic = ({tyyppi, arvo, lkm}) => {
             )
         case "hyva":
             return (
-                <p>Hyvä: {arvo}</p>
+                <tr>
+                    <td>Hyvä:</td>
+                    <td>{arvo}</td>
+                </tr>
             )
         case "neutraali":
             return (
-                <p>Neutraali: {arvo}</p>
+                <tr>
+                    <td>Neutraali:</td>
+                    <td>{arvo}</td>
+                </tr>
             )
         case "huono":
             return (
-                <p>Huono: {arvo}</p>
+                <tr>
+                    <td>huono:</td>
+                    <td>{arvo}</td>
+                </tr>
             )
-        default: break
+        default:
+            break
     }
 
 }
 
 const PalautteidenKeskiarvo = ({osoittaja, palautteidenLkm}) => {
     let ka = osoittaja / palautteidenLkm;
-    if (palautteidenLkm === 0) ka = 0
     return (
-        <p>Keskiarvo: {ka}</p>
+        <tr>
+            <td>Keskiarvo:</td>
+            <td>{ka}</td>
+        </tr>
     )
 }
 
 const PositiivistenOsuus = ({hyvia, palautteidenLkm}) => {
     let po = (hyvia / palautteidenLkm) * 100;
-    if (hyvia === 0) po = 0;
     return (
-        <p>Positiivisia: {po}%</p>
+        <tr>
+            <td>Positiivisuutta:</td>
+            <td>{po}%</td>
+        </tr>
     )
 }
 
