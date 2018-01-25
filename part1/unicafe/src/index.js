@@ -90,7 +90,7 @@ const suurimmanLuvunIndeksi = (taulukko, taulukonPituus) => {
             indeksi = i
         }
     }
-    
+
     return indeksi
 }
 
