@@ -1,5 +1,5 @@
 import React from 'react';
-import Names from './comps/Names'
+import Numbers from './comps/Numbers'
 
 class App extends React.Component {
     constructor(props) {
@@ -66,8 +66,7 @@ class App extends React.Component {
                         <button type="submit">lisää</button>
                     </div>
                 </form>
-                <h2>Numerot</h2>
-                <Names people={filteredPeople}/>
+                <Numbers people={filteredPeople}/>
             </div>
         )
     }
