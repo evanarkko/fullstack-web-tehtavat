@@ -53,9 +53,9 @@ class App extends Component {
 
 render(){
     let countryList = this.state.displayedCountries.map(country => <p key={country.alpha2Code} onClick={this.forceDetails}>{country.name}</p>)
-    let country = <div/>
+    let countryDetails = <div/>
     if(this.state.displayedCountries.length === 1){
-        country = <CountryDetails country={this.state.displayedCountries[0]}/>
+        countryDetails = <CountryDetails country={this.state.displayedCountries[0]}/>
         countryList = []
     }
 
@@ -67,8 +67,7 @@ render(){
             <div>
                 {countryList}
             </div>
-
-            {country}
+            {countryDetails}
         </div>
     )
     }
