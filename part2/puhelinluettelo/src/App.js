@@ -1,28 +1,24 @@
 import React from 'react';
 import Numbers from './comps/Numbers'
+import axios from 'axios'
 
 class App extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            persons: [
-                {
-                    name: 'Arto Hellas',
-                    number: '000 555 000'
-                },
-                {
-                    name: 'Kullin Kääntäjä',
-                    number: '120 555 000'
-                },
-                {
-                    name: 'Pentti Joukkola',
-                    number: '000 555 0230'
-                }
-            ],
+            persons: [],
             newName: '',
             newNumber: '',
             filter: ''
         }
+    }
+
+    componentWillMount() {
+        console.log('will mount')
+        axios.get('http://localhost:3001/persons').then(response => {
+            console.log('data: ', response.data)
+            this.setState({persons: response.data})
+        })
     }
 
     addNewPerson = (event) => {
