@@ -1,22 +1,14 @@
 import React from 'react'
 
-const Numbers = ({people}) => {
-    return (
-        <div>
-            <h2>Numerot</h2>
-            <table>
-                <tbody>
-                {people.map(person =>
-                    <tr key={person.name}>
-                        <td>{person.name}</td>
-                        <td>{person.number}</td>
-                    </tr>
-                )}
-                </tbody>
-            </table>
-        </div>
-    )
 
+const Number = ({person, deletePerson}) => {
+    return(
+        <tr key={person.name}>
+            <td>{person.name}</td>
+            <td>{person.number}</td>
+            <td><button onClick={deletePerson}>poista</button></td>
+        </tr>
+    )
 }
 
-export default Numbers
+export default Number

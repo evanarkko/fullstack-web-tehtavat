@@ -1,6 +1,6 @@
 import React from 'react'
 import Note from './components/Note'
-import axios from 'axios'
+import noteService from './services/notes'
 
 class App extends React.Component {
     constructor(props) {
@@ -13,10 +13,9 @@ class App extends React.Component {
     }
 
     componentWillMount() {
-        console.log('will mount')
-        axios.get('http://localhost:3001/notes').then(response => {
-            console.log('data: ', response.data)
-            this.setState({notes: response.data})
+        noteService.getAll().then(notes => {
+            console.log('data: ', notes)
+            this.setState({notes})
         })
     }
 
@@ -24,25 +23,44 @@ class App extends React.Component {
         event.preventDefault()
         const noteObject = {
             content: this.state.newNote,
-            date: new Date().new,
+            date: new Date(),
             important: Math.random() > 0.5,
             id: this.state.notes.length + 1
         }
 
-        const notes = this.state.notes.concat(noteObject)
-
-        this.setState({
-            notes,
-            newNote: ''
-        })
+        noteService.create(noteObject)
+            .then(newNote => {
+                this.setState({
+                    notes: this.state.notes.concat(newNote),
+                    newNote: ''
+                })
+            })
     }
     handleInputChange = (event) => {
         console.log(event.target.value)
-        this.setState({newNote : event.target.value})
+        this.setState({newNote: event.target.value})
     }
 
     toggleVisible = () => {
         this.setState({showAllNotes: !this.state.showAllNotes})
+    }
+
+    toggleImportanceOf = (id) => {
+        return () => {
+            const note = this.state.notes.find(n => n.id === id)
+            const changedNote = {...note, important: !note.important}
+
+            noteService.update(id, changedNote)
+                .then(updatedNote => {
+                    this.setState({
+                        notes: this.state.notes.map(note => note.id !== id ? note : changedNote)
+                    })
+                })
+                .catch(error => {
+                    alert(`muistiinpano '${note.content}' on jo valitettavasti poistettu palvelimelta`)
+                    this.setState({notes: this.state.notes.filter(n => n.id !== id)})
+                })
+        }
     }
 
     render() {
@@ -59,7 +77,13 @@ class App extends React.Component {
                     </button>
                 </div>
                 <ul>
-                    {notesToShow.map(note => <Note key={note.id} note={note} />)}
+                    {notesToShow.map(note =>
+                        <Note
+                            key={note.id}
+                            note={note}
+                            toggleImportance={this.toggleImportanceOf(note.id)}
+                        />
+                    )}
                 </ul>
                 <form onSubmit={this.addNote}>
                     <input value={this.state.newNote} onChange={this.handleInputChange}/>

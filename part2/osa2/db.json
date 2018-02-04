@@ -16,14 +16,13 @@
       "id": 3,
       "content": "HTTP-protokollan tärkeimmät metodit ovat GET ja POST",
       "date": "2017-12-10T19:20:14.298Z",
-      "important": true
+      "important": false
     },
-{
+    {
       "id": 4,
       "content": "Evan-protokollan tärkeimmät metodit ovat WIN ja WIN",
       "date": "2017-12-10T19:20:14.298Z",
       "important": true
     }
-
   ]
 }

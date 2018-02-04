@@ -1,6 +1,6 @@
 import React from 'react';
-import Numbers from './comps/Numbers'
-import axios from 'axios'
+import Number from './comps/Numbers'
+import personService from './services/persons'
 
 class App extends React.Component {
     constructor(props) {
@@ -15,19 +15,31 @@ class App extends React.Component {
 
     componentWillMount() {
         console.log('will mount')
-        axios.get('http://localhost:3001/persons').then(response => {
-            console.log('data: ', response.data)
-            this.setState({persons: response.data})
+        personService.getAll().then(persons => {
+            this.setState({persons})
         })
     }
 
     addNewPerson = (event) => {
         event.preventDefault()
-        if (!this.state.persons.map(person => person.name).includes(this.state.newName)) {
-            const persons = this.state.persons.concat({name: this.state.newName, number: this.state.newNumber})
-            this.setState({persons})
+        const newPerson = {name: this.state.newName, number: this.state.newNumber}
+        if (!this.state.persons.map(person => person.name).includes(newPerson.name)) {//tarkistetaan onko jo nimi (varmaan tarpeeton)
+            personService.create(newPerson).then(responsePerson => {
+                this.setState({persons: this.state.persons.concat(responsePerson)})
+            })
         } else {
-            alert('Nimi jo listassa')
+            const id = this.state.persons.find(person => person.name === newPerson.name).id
+            if (window.confirm(`${newPerson.name} on jo luettelossa. Korvataanko numero?`)) {
+                personService.updateNumber(id, newPerson)
+                    .then(response => {
+                        this.setState({persons: this.state.persons.map(person => person.id !== id ? person : newPerson)})
+                    })
+                    .catch(error => {
+                        personService.create(newPerson).then(responsePerson => {
+                            this.setState({persons: this.state.persons.filter(person => person.name !==responsePerson.name).concat(responsePerson)})
+                        })
+                    })
+            }
         }
     }
 
@@ -41,6 +53,18 @@ class App extends React.Component {
 
     handleFilterChange = (event) => {
         this.setState({filter: event.target.value})
+    }
+
+    deletePersonById = (id) => {
+        return () => {
+            const person = this.state.persons.find(person => person.id === id)
+            if (window.confirm(`Poistetaanko ${person.name}?`)) {
+                personService.remove(id)
+                    .then(response => {
+                        this.setState({persons: this.state.persons.filter(p => p.id !== id)})
+                    })
+            }
+        }
     }
 
     render() {
@@ -62,12 +86,25 @@ class App extends React.Component {
                         <button type="submit">lisää</button>
                     </div>
                 </form>
-                <Numbers people={filteredPeople}/>
+
+                <h2>Numerot</h2>
+                <table>
+                    <tbody>
+                    {filteredPeople.map(person => <Number
+                        key={person.id}
+                        person={person}
+                        deletePerson={this.deletePersonById(person.id)}
+                    />)}
+                    </tbody>
+                </table>
             </div>
         )
     }
-}
 
+    componentDidMount() {
+        document.title = 'Puhelinluettelo'
+    }
+}
 
 
 export default App
