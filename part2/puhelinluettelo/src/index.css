@@ -3,3 +3,17 @@ body {
   padding: 0;
   font-family: sans-serif;
 }
+
+
+.delete{
+  color: whitesmoke;
+  background-color: red;
+}
+.add{
+  color: whitesmoke;
+  background-color: green;
+}
+.alter{
+  color: whitesmoke;
+  background-color: purple;
+}

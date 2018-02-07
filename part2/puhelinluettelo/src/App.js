@@ -1,6 +1,7 @@
 import React from 'react';
 import Number from './comps/Numbers'
 import personService from './services/persons'
+import Alert from './comps/Notification'
 
 class App extends React.Component {
     constructor(props) {
@@ -9,14 +10,20 @@ class App extends React.Component {
             persons: [],
             newName: '',
             newNumber: '',
-            filter: ''
+            filter: '',
+
+
+            addedPerson: null,
+            deletedP: null,
+            alteredP: null
+
         }
     }
 
     componentWillMount() {
         console.log('will mount')
-        personService.getAll().then(persons => {
-            this.setState({persons})
+        personService.getAll().then(personas => {
+            this.setState({persons: personas})
         })
     }
 
@@ -25,18 +32,29 @@ class App extends React.Component {
         const newPerson = {name: this.state.newName, number: this.state.newNumber}
         if (!this.state.persons.map(person => person.name).includes(newPerson.name)) {//tarkistetaan onko jo nimi (varmaan tarpeeton)
             personService.create(newPerson).then(responsePerson => {
-                this.setState({persons: this.state.persons.concat(responsePerson)})
+                this.setState({
+                    persons: this.state.persons.concat(responsePerson),
+                    addedPerson: newPerson.name
+                })
+                setTimeout(() => {
+                    this.setState({addedPerson: null})
+                }, 4000)
             })
         } else {
             const id = this.state.persons.find(person => person.name === newPerson.name).id
             if (window.confirm(`${newPerson.name} on jo luettelossa. Korvataanko numero?`)) {
                 personService.updateNumber(id, newPerson)
                     .then(response => {
-                        this.setState({persons: this.state.persons.map(person => person.id !== id ? person : newPerson)})
-                    })
-                    .catch(error => {
+                        this.setState({
+                            persons: this.state.persons.map(person => person.id !== id ? person : newPerson),
+                            alteredP: newPerson.name
+                        })
+                        setTimeout(() => {
+                            this.setState({alteredP: null})
+                        }, 4000)
+                    }).catch(error => {
                         personService.create(newPerson).then(responsePerson => {
-                            this.setState({persons: this.state.persons.filter(person => person.name !==responsePerson.name).concat(responsePerson)})
+                            this.setState({persons: this.state.persons.filter(person => person.name !== responsePerson.name).concat(responsePerson)})
                         })
                     })
             }
@@ -61,8 +79,16 @@ class App extends React.Component {
             if (window.confirm(`Poistetaanko ${person.name}?`)) {
                 personService.remove(id)
                     .then(response => {
-                        this.setState({persons: this.state.persons.filter(p => p.id !== id)})
+                        this.setState({
+                            persons: this.state.persons.filter(p => p.id !== id)})
                     })
+                this.setState({
+                    deletedP: person.name
+                })
+                console.log('wtf')
+                setTimeout(() => {
+                    this.setState({deletedP: null})
+                }, 4000)
             }
         }
     }
@@ -72,7 +98,10 @@ class App extends React.Component {
 
         return (
             <div>
-                <h2>Puhelinluettelo</h2>
+                <h1>Puhelinluettelo</h1>
+                <Alert.AdditionAlert addedPerson={this.state.addedPerson}/>
+                <Alert.DeletionAlert deletedPerson={this.state.deletedP}/>
+                <Alert.AlterAlert alteredPerson={this.state.alteredP}/>
                 <form>
                     rajaa näytettäviä<input value={this.state.filter} onChange={this.handleFilterChange}/>
                 </form>
