@@ -1,0 +1,17 @@
+{
+  "name": "blogilista",
+  "version": "1.0.0",
+  "description": "School project for blogs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "watch": "nodemon index.js"
+  },
+  "author": "Evan Miller",
+  "license": "ISC",
+  "dependencies": {
+    "mongoose": "^5.0.4",
+    "nodemon": "^1.14.12"
+  }
+}
