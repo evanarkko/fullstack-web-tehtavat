@@ -4,14 +4,22 @@
   "description": "School project for blogs",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js",
-    "watch": "nodemon index.js"
+    "start": "NODE_ENV=production node index.js",
+    "watch": "NODE_ENV=development nodemon index.js",
+    "test": "NODE_ENV=test jest --verbose"
   },
   "author": "Evan Miller",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^1.0.3",
+    "dotenv": "^5.0.0",
+    "http": "0.0.0",
+    "jquery": "^3.3.1",
     "mongoose": "^5.0.4",
     "nodemon": "^1.14.12"
+  },
+  "devDependencies": {
+    "jest": "^22.3.0",
+    "supertest": "^3.0.0"
   }
 }
