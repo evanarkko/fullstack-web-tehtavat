@@ -85,7 +85,6 @@ class App extends React.Component {
                 this.setState({
                     deletedP: person.name
                 })
-                console.log('wtf')
                 setTimeout(() => {
                     this.setState({deletedP: null})
                 }, 4000)

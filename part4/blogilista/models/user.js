@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-const User = mongoose.model('User', {
+const userSchema = mongoose.Schema({
     username: String,
     name: String,
     adult: Boolean,
@@ -8,5 +8,7 @@ const User = mongoose.model('User', {
     blogs: [{type: mongoose.Schema.Types.ObjectId, ref: 'Blog'}]
 
 })
+
+const User = mongoose.model('User', userSchema)
 
 module.exports = User

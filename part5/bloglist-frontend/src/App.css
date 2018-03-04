@@ -1,0 +1,6 @@
+.Notification{
+    border: solid green;
+}
+.BadNotification{
+    border: solid red
+}

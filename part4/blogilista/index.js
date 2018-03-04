@@ -9,7 +9,7 @@ const mongoose = require('mongoose')
 const config = require('./utils/config')
 
 
-mongoose.connect(config.mongoUrl) //MATERIAALISSA YHTEYS AVATTIIN index.js, mutta selvempi tehdä se täällä mielestäni.
+mongoose.connect(config.mongoUrl)
 mongoose.Promise = global.Promise
 
 app.use(cors())

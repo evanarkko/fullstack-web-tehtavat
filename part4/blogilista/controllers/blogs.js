@@ -13,17 +13,25 @@ blogRouter.post('/', async (request, response) => {
     const users = await User.find({})
     const userIds = users.map(user => user.id)
 
-    const addedBlog = request.body
-    if(!addedBlog.title || !addedBlog.url) {
+    const body = request.body
+    if(!body.title || !body.url) {
         return response.sendStatus(400)
     }
-    if(!addedBlog.likes) addedBlog.likes = 0
-    addedBlog.user = userIds.find(id => true) //first user added
+    if(!body.likes) body.likes = 0
+    body.user = userIds.find(id => true) //first user in list added as owner
 
 
-    const blog = new Blog(addedBlog)
-
+    const blog = new Blog(body)
     const result = await blog.save()
+
+
+    const user = User.findById(body.user)
+
+    console.log(body.user)
+    user.blogs = user.blogs.concat(result._id)
+    await user.save()
+
+
     response.status(201).json(result)
 })
 

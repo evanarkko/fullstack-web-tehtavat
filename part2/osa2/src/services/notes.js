@@ -10,6 +10,7 @@ const getAll = () => {
         date: '2017-12-10T17:30:31.098Z',
         important: true
     }
+    console.log('wtf')
     return request.then(response => response.data.concat(nonExisting))
 }
 
