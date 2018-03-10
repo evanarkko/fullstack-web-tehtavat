@@ -1,4 +1,5 @@
-import anecdotes from "../services/anecdotes";
+import anecdoteService from "../services/anecdotes";
+
 
 const anecdotesAtStart = [
     'If it hurts, do it more often',
@@ -39,24 +40,39 @@ const reducer = (state = [], action) => {
     return state
 }
 
-export const anecdoteCreate = (newAnecdote) => {
-    return {
-        type: 'CREATE',
-        content: newAnecdote.content,
-        id: newAnecdote.id
+export const anecdoteCreate = (content) => {
+    return async (dispatch) => {
+        const newAnecdote = await anecdoteService.createNew(content)
+        dispatch({
+            type: 'CREATE',
+            content: newAnecdote.content,
+            id: newAnecdote.id
+        })
     }
 }
 export const anecdoteVote = (id) => {
-    return{
-        type: 'VOTE',
-        id
+    return async (dispatch) => {
+        const anecdote = await anecdoteService.getById(id)
+        console.log(anecdote.votes = anecdote.votes + 1)
+        await anecdoteService.sendVote(anecdote)
+        dispatch({
+            type: 'VOTE',
+            id
+        })
     }
 }
-export const anecdotesInit = (anecdotes) => {
-    return{
-        type: 'INIT',
-        anecdotes
+export const anecdotesInit = () => {
+    return async (dispatch) => {
+        const anecdotes = await anecdoteService.getAll()
+        dispatch({
+            type: 'INIT',
+            anecdotes
+        })
     }
+
+    /*{
+
+    }*/
 }
 
 export default reducer

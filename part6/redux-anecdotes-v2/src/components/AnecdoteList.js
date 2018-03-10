@@ -17,10 +17,8 @@ class AnecdoteList extends React.Component {
                         </div>
                         <div>
                             has {anecdote.votes}
-                            <button onClick={async () => {
-                                await this.props.anecdoteVote(anecdote.id)
-                                console.log(anecdote.votes=anecdote.votes+1)
-                                anecdoteService.sendVote(anecdote)
+                            <button onClick={async => {
+                                this.props.anecdoteVote(anecdote.id)
                             }}>
                                 vote
                             </button>

@@ -17,7 +17,7 @@ const render = () => {
   )
 }
 
-anecdoteService.getAll().then(anecdotes => store.dispatch(anecdotesInit(anecdotes)))
+anecdoteService.getAll().then(anecdotes => store.dispatch(anecdotesInit()))
 
 render()
 store.subscribe(render)

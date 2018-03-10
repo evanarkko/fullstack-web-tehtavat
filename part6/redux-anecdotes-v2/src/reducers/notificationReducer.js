@@ -9,10 +9,18 @@ const reducer = (state = defaultMessage, action) => {
     }
 }
 
-export const notificationAdd = (content) => {
-    return{
-        type: 'NEW',
-        content
+export const notificationAdd = (content, time) => {
+    return async (dispatch) => {
+        dispatch({
+            type: 'NEW',
+            content
+        })
+        setTimeout(() => {
+            dispatch({
+                type: 'NEW',
+                content:""
+            })
+        }, time * 1000)
     }
 }
 

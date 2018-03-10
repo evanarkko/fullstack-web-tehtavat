@@ -2,6 +2,12 @@ import axios from 'axios'
 
 const url = "http://localhost:3004/anecdotes"
 
+const getById = async (id) => {//use this in anecdoteReducer action creator
+    const response = await axios.get(`${url}/${id}`)
+    console.log(response.data)
+    return response.data
+}
+
 const getAll = async () => {
     const response = await axios.get(url)
     return response.data
@@ -26,4 +32,4 @@ const sendVote = async (anecdote) => {
     return response.data
 }
 
-export default {getAll, createNew, sendVote}
+export default {getAll, createNew, sendVote, getById}
